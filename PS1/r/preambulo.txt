@@ -1,0 +1,154 @@
+\usepackage[margin=2cm]{geometry}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage[inline]{enumitem}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{xcolor}
+\usepackage{amssymb, tabularx, xcolor, nccmath}
+\usepackage[utf8]{inputenc}
+\usepackage{cancel}
+\usepackage[portuguese]{babel}
+\usepackage{titlesec}
+\usepackage{setspace, mathtools}
+\titleformat*{\section}{\sffamily\large\bfseries}
+\titleformat*{\subsection}{\sffamily\normalsize\bfseries}
+\makeatletter
+\renewcommand*\env@matrix[1][\arraystretch]{%
+  \edef\arraystretch{#1}%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{*\c@MaxMatrixCols c}}
+\makeatother
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=magenta,
+    filecolor=magenta,      
+    urlcolor=magenta,
+}
+
+\usepackage{cmbright}
+\usepackage[T1]{fontenc}
+
+\setlength{\parindent}{4em}
+\setlength{\parskip}{1em}
+\renewcommand{\baselinestretch}{1.2}
+
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
+
+
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newcommand*{\QEDA}{\hfill\ensuremath{\blacksquare}}%
+\newcommand*{\QEDB}{\hfill\ensuremath{\square}}%
+\DeclareMathOperator*{\plim}{plim}
+
+\setlength\parindent{0pt}
+
+\usepackage{dsfont}
+
+\newcommand\Z{\mathbf{Z}}
+\newcommand\E{\mathbb{E}}
+
+\renewcommand\H{\mathbb{H}}
+\newcommand\R{\mathbb{R}}
+\newcommand\V{\mathbf{V}}
+\newcommand\B{\mathbf{B}}
+\newcommand\T{\mathbf{T}}
+\newcommand\D{\mathbf{D}}
+\newcommand\C{\mathbf{D}}
+\newcommand\X{\mathbf{X}}
+\newcommand\G{\mathbf{G}}
+
+\newcommand\ii{{\boldsymbol{\iota}}}
+\renewcommand\O{{\boldsymbol{\Omega}}}
+\newcommand\oo{{\mathbf{\Omega}}}
+\renewcommand\aa{{\boldsymbol{\alpha}}}
+\renewcommand\tt{\boldsymbol{\theta}}
+
+\DeclareMathOperator*{\argmax}{argmax}
+
+
+\newcommand\y{\mathbf{y}}
+\newcommand\e{\mathbf{e}}
+\renewcommand\u{\mathbf{u}}
+\renewcommand\d{\mathbf{d}}
+\newcommand\resid{\mathbf{u}}
+
+\newcommand\0{\mathbf{0}}
+\newcommand\1{\mathbf{1}}
+
+\newcommand\betabold{\pmb{\beta}}
+\newcommand\ones{\boldsymbol{\iota}}
+\newcommand\epbold{\boldsymbol{\epsilon}}
+\newcommand\varep{\boldsymbol{\varepsilon}}
+
+\newcommand\x{\mathbf{x}}
+\newcommand\z{\mathbf{z}}
+\newcommand\Q{\mathbf{Q}}
+\newcommand\I{\mathbf{I}}
+\newcommand\w{{\mathbf{w}}}
+\newcommand\wm{\bar{\mathbf{w}}}
+\newcommand\M{{\mathbf{M}}}
+\renewcommand\P{{\mathbf{P}}}
+\newcommand\var{\operatorname{var}}
+\newcommand\cov{\operatorname{cov}}
+\renewcommand\b{\mathbf{b}}
+
+\newcommand\jump{\\[1em]}
+
+
+\usepackage{amssymb,graphicx}
+\def\tallqed{\smash{\scalebox{.75}[1.025]{\color{blue!50!black}$\blacksquare$}}}
+
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+
+\newcommand{\prnt}[1]{\ensuremath{\left(#1\right)}} %parentheses
+\newcommand{\colch}[1]{\ensuremath{\left[#1\right]}} %square brackets
+\newcommand{\chave}[1]{\ensuremath{\left\{#1\right\}}}  %curly brackets
+
+\usepackage{stackengine}
+\renewcommand\useanchorwidth{T}
+\usepackage{graphicx}
+\stackMath
+
+\allowdisplaybreaks
+
+\usepackage{MnSymbol}
+
+\newcommand{\mytext}[1]% #1 = same as intertext
+{&\parbox{0.94\textwidth}{\rule{0pt}{.5\baselineskip}\\
+\textrm{#1}\\
+\rule{0pt}{.5\baselineskip}}&\\}
+
+\newcounter{exercise}
+\newcounter{problem}[exercise]
+\newcommand{\myitem}{\stepcounter{problem}\tag*{\alph{problem})}}
+
+\usepackage{amsmath, amsthm, amssymb, amsfonts, enumitem, fancyhdr, color, comment, graphicx, environ}
+
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+
+\newenvironment{solu}
+    {\hfill \vspace{-0.5cm} \break {\color{magenta}\textsf{Solution.}}
+    }
+    {{\color{blue!50!black}\QEDA}}
+
+\setlength{\parskip}{\baselineskip}%
+
+\newenvironment{sol}
+    {\hfill\break\break {\color{magenta}\textsf{Solution.}}
+    }
+    {{\color{blue!50!black}\QEDA}}
+
+\setlength{\parskip}{\baselineskip}%
+    
