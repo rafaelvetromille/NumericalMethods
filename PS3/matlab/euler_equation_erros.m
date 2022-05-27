@@ -44,6 +44,8 @@ hold on
 for i = 1:nz
     plot(parameters.kgrid, EEE(:,i), 'DisplayName', sprintf('$z_{%4i} = %6.2f$', [i, parameters.zgrid(i)]));   
 end
+hl = legend('show', 'Location', 'southeast');
+set(hl, 'Interpreter','latex')
 set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
 set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex')
 set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
