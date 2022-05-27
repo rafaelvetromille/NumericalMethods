@@ -34,5 +34,4 @@ ylabel('fun\c{c}{\~a}o valor, $v(k,\bar{z})$','Interpreter','latex');
 title('\textbf{Fun\c{c}{\~a}o valor $$v(k,z)$$ para v{\''a}rios $$z$$''s}','interpreter','latex','fontsize',20);
 axis([min(kgrid) max(kgrid) min(min(variable)) max(max(variable))]) 
 box on 
-
 end
