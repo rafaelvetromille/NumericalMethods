@@ -201,23 +201,4 @@ EEE = euler_equation_erros(c_star, g_star, gamma_star, d, parameters);
 
 %% Exercício 2
 
-n_p = 11;
-
-grid_k = linspace(0.75*k_ss, 1.25*k_ss, n_p);
-
-tic
-
-fun = @(x) foc_collocation(x, n_p)
-
-x0 = 0;
-
-for j = 1:7
-for i = 1:n_p
-
-x0(j,i) = i;
-
-end
-end
-
-
 
