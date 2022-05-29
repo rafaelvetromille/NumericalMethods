@@ -1,9 +1,6 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                  Métodos Numéricos - Lista 3                            %
-%                            Programa escrito por: Rafael Vetromille                      %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%
+% Métodos Numéricos - EPGE/FGV 2022
+% Professor: Cezar Santos
+% Problem Set 3 - Aluno: Rafael Vetromille
 
 % Início formal do documento
 clearvars;
