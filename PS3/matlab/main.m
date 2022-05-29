@@ -202,3 +202,4 @@ EEE = euler_equation_erros(c_star, g_star, gamma_star, d, parameters);
 %% Exercício 2
 
 
+
