@@ -40,9 +40,7 @@ fprintf('Com a calibração proposta, o capital e o consumo de estado estacionário
 % Construímos, primeiramente, o grid para o capital e o grid para a
 % produtividade. Para o grid de capital, use 500 pontos linearmente espaçados
 % no intervalo [0.75*kss, 1.25*kss]. 
-nz       = 7; 
-zmin     = -m*sqrt(sigma^2/(1 - rho^2));
-zmax     = +m*sqrt(sigma^2/(1 - rho^2));
+nz       = 7; zmin     = -m*sqrt(sigma^2/(1 - rho^2)); zmax     = +m*sqrt(sigma^2/(1 - rho^2));
 
 nk       = 500; 
 kmax     = 1.25*kss;
@@ -60,7 +58,7 @@ parameters.P     = P;
 parameters.zgrid = zgrid;
 parameters.kgrid = kgrid;
 
-% Criamos uma função que cria os Polinômios de Chebychev e
+% Ccriamos uma função que cria os Polinômios de Chebychev e
 % vamos testar essa função plotando os cinco primeiros polinômios:
 % syms x
 % fplot(chebyshev(0:4,x))
@@ -72,13 +70,13 @@ parameters.kgrid = kgrid;
 
 %%
 
-% Turning off dialogs
-options = optimset('Display', 'off');   
+options = optimset('Display', 'off');   % Turning off dialogs
                    
 % Otimização (atualizando o guess via 'for')
 tic;
 
-d = 5;      % Ordem do polinômico de Chebychev
+% Ordem do polinômico de Chebychev
+d = 5;
 
 for id = 1:d 
     if id == 1
@@ -97,7 +95,12 @@ for id = 1:d
 end
 timer = toc;
 
-% Função consumo (c = c(k,z))
+% Verificamos se o sistema foi de fato zerado
+disp(gamma_star);
+
+%%
+
+% Função Consumo
 c_star = zeros(nk, nz);
 
 % Preenchemos a função consumo usando o peso ótimo
@@ -111,7 +114,9 @@ end
 figure(1)
 plot_consumption_policy_function(c_star, kgrid, zgrid)
 
-% Função política do capital (k' = g(k,z))
+%%
+
+% Função política do capital
 g_star = zeros(nk, nz);
 
 for iz = 1:nz
@@ -162,7 +167,8 @@ while (error > tol && iter <= max_iter)
             Ec = 0;
             for jz = 1:nz
                 Ec = Ec + P(iz,jz)*v(idx(ik,iz),jz);
-                %Ev = Ev + P(iz,jz)*interp1(kgrid, v(:,jz), g_star(ik,iz), 'linear');   % interpolando (mais correto?)
+                %Ev = Ev + P(iz,jz)*interp1(kgrid, v(:,jz), g_star(ik,iz), 'spline');
+                %Ev = Ev + P(iz,jz)*interp1(kgrid, v(:,jz), g_star(ik,iz), 'linear');
             end
             
             %%% Computar a funçao valor (matriz)
