@@ -2,7 +2,7 @@
 % Professor: Cezar Santos
 % Problem Set 3 - Aluno: Rafael Vetromille
 
-% Início formal do documento
+% Início formal do documento;
 clearvars;
 close all;
 clc;
@@ -25,7 +25,7 @@ css  = kss^alpha + (1-delta)*kss - kss;                     % Consumo de estado 
 
 fprintf('Com a calibração proposta, o capital e o consumo de estado estacionário são %3.2f. e %3.2f, respectivamente. \n\n', [kss, css]);
 
-% Método de Tauchen (já feito em listas anteriores)
+% Método de Tauchen (já feito em listas anteriores);
 [S,P] = mytauchen(const, m, rho, sigma, nz);
 
 %% Exercício 1
@@ -183,16 +183,16 @@ end
 % Plotar a função valor;
 plot_value_function(v, kgrid, zgrid)
 
-%% Erros de Euler (EEE)
+%% Erros de Euler (EEE);
 EEE = euler_equation_erros(c_star, g_star, gamma_star, d, parameters);
 
 %% Exercício 2.1
 
 tic
-nl  = 7;   % (L-1) intervalos
+nl  = 7;   % (L-1) intervalos;
 fun = @(x) build_system_fe(x, nl, parameters);
 
-% Guess inicial (sugerido pela monitora)
+% Guess inicial (sugerido pela monitora);
 x0 = zeros(nz,nl);
 for iz = 1:nz
     for il = 1:nl
@@ -201,9 +201,8 @@ for iz = 1:nz
 end
 
 % Otimização;
-options = optimset('Display','off');     % Turning off dialogs
+options = optimset('Display','off'); 
 x_star  = fsolve(fun, x0, options);
-
 timer(2) = toc;
 
 %%
@@ -292,7 +291,7 @@ end
 % Plotar a função valor;
 plot_value_function(v, kgrid, zgrid)
 
-%% Erros de Euler (EEE)
+%% Erros de Euler (EEE);
 EEE = euler_equation_erros_fe(c_new, g_new, x_star, nl, parameters);
 
 %% Exercício 2.2
