@@ -171,7 +171,7 @@ while (error > tol && iter <= max_iter)
     end
     
     % Calcular o erro e o número de iterações;
-    error = max(max(abs(Tv - v)));
+    error = max(max(abs(Tv-v)));
     iter  = iter + 1;                 % Atualiza a  iteração;
     v     = Tv;                       % Atualiza o chute de v pelo novo Tv encontrado;
     
@@ -187,8 +187,14 @@ EEE = euler_equation_erros(c_star, g_star, gamma_star, d, parameters);
 
 %% Exercício 2.1
 
-tic
-nl  = 7;   % (L-1) intervalos;
+% Para este item, novamente utilize um método de projeção, mas, em vez
+% de um método espectral, use o método dos elementos finitos. Divida o
+% espaço de estado em diversos elementos. Para resolver este problema,
+% tente utilizar tanto o método da colocação quanto Galerkin. De novo,
+% evidências!
+
+tic;
+nl  = 7;   % (l-1) intervalos;
 fun = @(x) build_system_fe(x, nl, parameters);
 
 % Guess inicial (sugerido pela monitora);
@@ -279,7 +285,7 @@ while (error > tol && iter <= max_iter)
     end
     
     % Calcular o erro e o número de iterações;
-    error = max(max(abs(Tv - v)));
+    error = max(max(abs(Tv-v)));
     iter  = iter + 1;                 % Atualiza a  iteração;
     v     = Tv;                       % Atualiza o chute de v pelo novo Tv encontrado;
     
@@ -294,3 +300,10 @@ plot_value_function(v, kgrid, zgrid)
 EEE = euler_equation_erros_fe(c_new, g_new, x_star, nl, parameters);
 
 %% Exercício 2.2
+
+% Para este item, novamente utilize um método de projeção, mas, em vez
+% de um método espectral, use o método dos elementos finitos. Divida o
+% espaço de estado em diversos elementos. Para resolver este problema,
+% tente utilizar tanto o método da colocação quanto Galerkin.1 De novo,
+% evidências!
+
