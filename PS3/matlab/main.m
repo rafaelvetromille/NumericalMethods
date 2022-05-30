@@ -72,7 +72,7 @@ title('Chebyshev polynomials')
 
 %%
 
-% Turning off dialogs
+% Desativando as mensagens do 'fsolve'
 options = optimset('Display', 'off');   
                    
 % Otimização (atualizando o guess via 'for')
@@ -99,7 +99,7 @@ timer(1) = toc;
 
 %%
 
-% Função consumo (c = c(k,z))
+% Função consumo (c = c(k,z));
 c_star = zeros(nk, nz);
 for iz = 1:nz
     for ik = 1:nk
@@ -107,13 +107,13 @@ for iz = 1:nz
     end
 end
 
-% Plotar a função política do consumo
+% Plotar a função política do consumo;
 figure(1)
 plot_consumption_policy_function(c_star, kgrid, zgrid)
 
 %%
 
-% Função política do capital (k' = g(k,z))
+% Função política do capital (k' = g(k,z));
 g_star = zeros(nk, nz);
 for iz = 1:nz
     for ik = 1:nk
@@ -121,14 +121,13 @@ for iz = 1:nz
     end
 end
 
-% Plotar a função política do capital
+% Plotar a função política do capital;
 figure(2)
 plot_capital_policy_function(g_star, kgrid, zgrid)
 
 %% Recuperando a função valor;
-tic; 
 
-% Recuperando a matriz de índices (está certo?)
+% Recuperando a matriz de índices (está certo?);
 idx = zeros(nk,nz);
 for iz = 1:nz
     for ik = 1:nk
@@ -138,7 +137,7 @@ for iz = 1:nz
     end
 end
 
-% Parâmetros numéricos
+% Parâmetros numéricos;
 iter     = 0;
 error    = 1;
 v        = zeros(nk,nz);            % Guess inicial;
@@ -150,51 +149,50 @@ while (error > tol && iter <= max_iter)
     for iz = 1:nz
         for ik = 1:nk
             
-            %%% Pegando o capital ik e criando um vetor de consumo
+            %%% Pegando o capital ik;
             k = kgrid(ik);                  % por algum motivo aumenta a performance do cógido
     
-            %%% Computar o consumo
+            %%% Computar o consumo;
             c         = zeros(nk,nz);
             c(ik,iz)  = zgrid(iz).*(k^alpha) + (1-delta).*k - kgrid(idx(ik,iz));
             
-            %%% Computar a utilidade (não há consumo negativo)
+            %%% Computar a utilidade (não há consumo negativo);
             u0 = utility(c(ik,iz), mu);
             
-            %%% Computar a esperança
-            Ec = 0;
+            %%% Computar a esperança;
+            Ev = 0;
             for jz = 1:nz
-                Ec = Ec + P(iz,jz)*v(idx(ik,iz),jz);
+                Ev = Ev + P(iz,jz)*v(idx(ik,iz),jz);
                 %Ev = Ev + P(iz,jz)*interp1(kgrid, v(:,jz), g_star(ik,iz), 'linear');   % interpolando (mais correto?)
             end
             
-            %%% Computar a funçao valor (matriz)
-            Tv(ik,iz) = u0 + beta.*Ec;  
+            %%% Computar a funçao valor (matriz);
+            Tv(ik,iz) = u0 + beta.*Ev;  
         end
     end
     
-    % Calcular o erro e o número de iterações
+    % Calcular o erro e o número de iterações;
     error = max(max(abs(Tv - v)));
-    iter  = iter + 1;                 % atualiza a  iteração
-    v     = Tv;                       % atualiza o chute de v pelo novo Tv encontrado
+    iter  = iter + 1;                 % Atualiza a  iteração;
+    v     = Tv;                       % Atualiza o chute de v pelo novo Tv encontrado;
     
-    % Imprime a iteração e o erro
+    % Imprime a iteração e o erro;
     fprintf('Error %4i %6.2e \n', [iter, error]);
 end
-timer(2) = toc;
 
-% Plotar a função valor
+% Plotar a função valor;
 plot_value_function(v, kgrid, zgrid)
 
 %% Erros de Euler (EEE)
 EEE = euler_equation_erros(c_star, g_star, gamma_star, d, parameters);
 
-%% Exercício 2
+%% Exercício 2.1
 
 tic
 nl  = 7;   % (L-1) intervalos
 fun = @(x) build_system_fe(x, nl, parameters);
 
-% Guess inicial
+% Guess inicial (sugerido pela monitora)
 x0 = zeros(nz,nl);
 for iz = 1:nz
     for il = 1:nl
@@ -202,15 +200,15 @@ for iz = 1:nz
     end
 end
 
-% Otimização (atualizando o guess via 'for')
+% Otimização;
 options = optimset('Display','off');     % Turning off dialogs
 x_star  = fsolve(fun, x0, options);
 
-timer = toc;
+timer(2) = toc;
 
 %%
 
-% Função consumo (c = c(k,z))
+% Função consumo (c = c(k,z));
 c_new = zeros(nk,nz);
 for i = 1:nz
     for j = 1:nk
@@ -218,13 +216,13 @@ for i = 1:nz
     end
 end
 
-% Plotar a função política do consumo
+% Plotar a função política do consumo;
 figure(1)
 plot_consumption_policy_function(c_new, kgrid, zgrid)
 
 %%
 
-% Função política do capital (k' = g(k,z))
+% Função política do capital (k' = g(k,z));
 g_new = zeros(nk, nz);
 for iz = 1:nz
     for ik = 1:nk
@@ -232,14 +230,13 @@ for iz = 1:nz
     end
 end
 
-% Plotar a função política do capital
+% Plotar a função política do capital;
 figure(2)
 plot_capital_policy_function(g_new, kgrid, zgrid)
 
 %% Recuperando a função valor;
-tic; 
 
-% Recuperando a matriz de índices (está certo?)
+% Recuperando a matriz de índices (está certo?);
 idx = zeros(nk,nz);
 for iz = 1:nz
     for ik = 1:nk
@@ -249,7 +246,7 @@ for iz = 1:nz
     end
 end
 
-% Parâmetros numéricos
+% Parâmetros numéricos;
 iter     = 0;
 error    = 1;
 v        = zeros(nk,nz);            % Guess inicial;
@@ -261,41 +258,41 @@ while (error > tol && iter <= max_iter)
     for iz = 1:nz
         for ik = 1:nk
             
-            %%% Pegando o capital ik e criando um vetor de consumo
-            k = kgrid(ik);                  % por algum motivo aumenta a performance do cógido
+            %%% Pegando o capital ik;
+            k = kgrid(ik);                  % Por algum motivo aumenta a performance do cógido;
     
-            %%% Computar o consumo
+            %%% Computar o consumo;
             c         = zeros(nk,nz);
             c(ik,iz)  = zgrid(iz).*(k^alpha) + (1-delta).*k - kgrid(idx(ik,iz));
             
-            %%% Computar a utilidade
+            %%% Computar a utilidade;
             u0 = utility(c(ik,iz), mu);
             
-            %%% Computar a esperança
+            %%% Computar a esperança;
             Ec = 0;
             for jz = 1:nz
                 Ec = Ec + P(iz,jz)*v(idx(ik,iz),jz);
                 %Ev = Ev + P(iz,jz)*interp1(kgrid, v(:,jz), g_star(ik,iz), 'linear');   % interpolando (mais correto?)
             end
             
-            %%% Computar a funçao valor (matriz)
+            %%% Computar a funçao valor (matriz);
             Tv(ik,iz) = u0 + beta.*Ec;  
         end
     end
     
-    % Calcular o erro e o número de iterações
+    % Calcular o erro e o número de iterações;
     error = max(max(abs(Tv - v)));
-    iter  = iter + 1;                 % atualiza a  iteração
-    v     = Tv;                       % atualiza o chute de v pelo novo Tv encontrado
+    iter  = iter + 1;                 % Atualiza a  iteração;
+    v     = Tv;                       % Atualiza o chute de v pelo novo Tv encontrado;
     
-    % Imprime a iteração e o erro
+    % Imprime a iteração e o erro;
     fprintf('Error %4i %6.2e \n', [iter, error]);
 end
-time = toc;
 
-% Plotar a função valor
+% Plotar a função valor;
 plot_value_function(v, kgrid, zgrid)
 
 %% Erros de Euler (EEE)
 EEE = euler_equation_erros_fe(c_new, g_new, x_star, nl, parameters);
 
+%% Exercício 2.2
