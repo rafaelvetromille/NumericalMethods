@@ -141,6 +141,7 @@ for iz = 1:nz
     end
 end
 
+% Parâmetros numéricos
 iter     = 0;
 error    = 1;
 v        = zeros(nk,nz);            % Guess inicial;
@@ -159,7 +160,7 @@ while (error > tol && iter <= max_iter)
             c         = zeros(nk,nz);
             c(ik,iz)  = zgrid(iz).*(k^alpha) + (1-delta).*k - kgrid(idx(ik,iz));
             
-            %%% Verificar consumos negativos
+            %%% Computar a utilidade (não há consumo negativo)
             u0 = utility(c(ik,iz), mu);
             
             %%% Computar a esperança
@@ -182,7 +183,7 @@ while (error > tol && iter <= max_iter)
     % Imprime a iteração e o erro
     fprintf('Error %4i %6.2e \n', [iter, error]);
 end
-time = toc;
+timer(2) = toc;
 
 % Plotar a função valor
 plot_value_function(v, kgrid, zgrid)
