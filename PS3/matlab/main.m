@@ -304,6 +304,6 @@ EEE = euler_equation_erros_fe(c_new, g_new, x_star, nl, parameters);
 % Para este item, novamente utilize um método de projeção, mas, em vez
 % de um método espectral, use o método dos elementos finitos. Divida o
 % espaço de estado em diversos elementos. Para resolver este problema,
-% tente utilizar tanto o método da colocação quanto Galerkin.1 De novo,
+% tente utilizar tanto o método da colocação quanto Galerkin. De novo,
 % evidências!
 
