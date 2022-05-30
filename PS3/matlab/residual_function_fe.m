@@ -1,26 +1,25 @@
 % Resiual function 
 
-function r_calc = residual_function_fe(a, k, j, parameters)
+function r_calc = residual_function_fe(x, k, nl, j, parameters)
 
-nz           = length(parameters.zgrid);
+nz        = length(parameters.zgrid);
 
-co           = c_fe(a(j,:), k, parameters);
-g            = find_g(k, parameters.zgrid(j), co, parameters);
+C0        = c_fe(x(j,:), k, nl, parameters);
+K1        = parameters.zgrid(j)*(k^(parameters.alpha)) + (1-parameters.delta)*k - C0;
 
-aux1         = zeros(nz,1);
-aux2         = zeros(nz,1);
+aux1      = zeros(nz,1);
+aux2      = zeros(nz,1);
 
 for s = 1:nz
-
-    c_prime = c_fe(a(s,:), g, parameters);
+     
+    C1      = c_fe(x(s,:), K1, nl, parameters);
     
-    aux1(s) = (1 - parameters.delta + parameters.alpha*parameters.zgrid(s)*g^(parameters.alpha-1));
-    aux2(s) = (c_prime/co)^(-parameters.mu);
-
+    aux1(s) = (1 - parameters.delta + parameters.alpha*parameters.zgrid(s)*K1^(parameters.alpha-1));
+    aux2(s) = (C1/C0)^(-parameters.mu);
+      
 end
 
 aux       = aux1 .* aux2;
 r_calc    = parameters.beta * parameters.P(j,:)*aux - 1;
 
-% r_calc = beta * (c_prime/co)^(-mu) * (1 - delta + alpha*z*k_prime^(alpha-1)) - 1  % caso deter
 end

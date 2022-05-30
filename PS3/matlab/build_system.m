@@ -1,4 +1,4 @@
-function residual_vector  = build_system(gamma, d, parameters)
+function residual_vector = build_system(gamma, d, parameters)
 
     nz           = length(parameters.zgrid);
 
