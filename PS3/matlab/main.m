@@ -101,8 +101,6 @@ timer(1) = toc;
 
 % Função consumo (c = c(k,z))
 c_star = zeros(nk, nz);
-
-% Preenchemos a função consumo usando o peso ótimo
 for iz = 1:nz
     for ik = 1:nk
         c_star(ik,iz) = c_hat(gamma_star(iz,:), kgrid(ik), d, parameters);
@@ -117,7 +115,6 @@ plot_consumption_policy_function(c_star, kgrid, zgrid)
 
 % Função política do capital (k' = g(k,z))
 g_star = zeros(nk, nz);
-
 for iz = 1:nz
     for ik = 1:nk
         g_star(ik,iz) = zgrid(iz)*(kgrid(ik)^alpha) + (1-delta)*kgrid(ik) - c_star(ik,iz);
@@ -215,7 +212,6 @@ timer = toc;
 
 % Função consumo (c = c(k,z))
 c_new = zeros(nk,nz);
-
 for i = 1:nz
     for j = 1:nk
         c_new(j,i) = c_fe(x_star(i,:), kgrid(j), nl, parameters);
@@ -230,7 +226,6 @@ plot_consumption_policy_function(c_new, kgrid, zgrid)
 
 % Função política do capital (k' = g(k,z))
 g_new = zeros(nk, nz);
-
 for iz = 1:nz
     for ik = 1:nk
         g_new(ik,iz) = zgrid(iz)*(kgrid(ik)^alpha) + (1-delta)*kgrid(ik) - c_new(ik,iz);
