@@ -254,6 +254,7 @@ for iz = 1:nz
     end
 end
 
+% Parâmetros numéricos
 iter     = 0;
 error    = 1;
 v        = zeros(nk,nz);            % Guess inicial;
@@ -272,7 +273,7 @@ while (error > tol && iter <= max_iter)
             c         = zeros(nk,nz);
             c(ik,iz)  = zgrid(iz).*(k^alpha) + (1-delta).*k - kgrid(idx(ik,iz));
             
-            %%% Verificar consumos negativos
+            %%% Computar a utilidade
             u0 = utility(c(ik,iz), mu);
             
             %%% Computar a esperança
