@@ -62,13 +62,13 @@ parameters.kgrid = kgrid;
 
 % Criamos uma função que cria os Polinômios de Chebychev e
 % vamos testar essa função plotando os cinco primeiros polinômios:
-% syms x
-% fplot(chebyshev(0:4,x))
-% axis([-1 1 -1 1])
-% grid on
-% ylabel('$T_n(x)$', 'Interpreter', 'latex')
-% legend('$T_0(x)$','$T_1(x)$','$T_2(x)$','$T_3(x)$','$T_4(x)$','Location','northwest', 'Interpreter', 'latex')
-% title('Chebyshev polynomials')
+syms x
+fplot(chebyshev(0:4,x))
+axis([-1 1 -1 1])
+grid on
+ylabel('$T_n(x)$', 'Interpreter', 'latex')
+legend('$T_0(x)$','$T_1(x)$','$T_2(x)$','$T_3(x)$','$T_4(x)$','Location','northwest', 'Interpreter', 'latex')
+title('Chebyshev polynomials')
 
 %%
 
