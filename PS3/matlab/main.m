@@ -7,7 +7,7 @@ clearvars;
 close all;
 clc;
 
-% Calibração
+% Calibração;
 beta     = 0.987;                        % Fator de desconto; 
 mu       = 2;                            % Coeficiente de aversão relativa ao risco;
 alpha    = 1/3;                          % Share do capital na função de produção; 
@@ -19,7 +19,7 @@ sigma    = 0.007;                        % Variância do erro do processo de rend
 nz       = 7;                            % Número de estados exógenos para a versão discreta do processo de renda AR(1); 
 m        = 3;                            % Número de desvios em relação à média do processo AR para definir a amplitude do espaço de estados. 
 
-% Capital de estado estacionário
+% Capital de estado estacionário;
 kss  = (1/alpha*(1/beta + delta - 1))^(1/(alpha-1));        % Capital de estado estacionário;
 css  = kss^alpha + (1-delta)*kss - kss;                     % Consumo de estado estacionário;            
 
@@ -28,7 +28,7 @@ fprintf('Com a calibração proposta, o capital e o consumo de estado estacionário
 % Método de Tauchen (já feito em listas anteriores);
 [S,P] = mytauchen(const, m, rho, sigma, nz);
 
-%% Exercício 1
+%% Exercício 1;
 
 % Para resolver esta lista, utilizaremos métodos de projeção. Para este
 % item, resolva o problema usando um método de projeção global. Em
@@ -51,7 +51,7 @@ kmin     = 0.75*kss;
 kgrid    = linspace(kmin, kmax, nk)';
 zgrid    = exp(linspace(zmin, zmax, nz))';
 
-% Estrutura de parâmetros para passar nas funções
+% Estrutura de parâmetros para passar nas funções;
 parameters.beta  = beta;
 parameters.alpha = alpha;
 parameters.delta = delta;
@@ -60,8 +60,7 @@ parameters.P     = P;
 parameters.zgrid = zgrid;
 parameters.kgrid = kgrid;
 
-% Criamos uma função que cria os Polinômios de Chebychev e
-% vamos testar essa função plotando os cinco primeiros polinômios:
+% Teste da função que criei os Polinômios de Chebychev;
 syms x
 fplot(chebyshev(0:4,x))
 axis([-1 1 -1 1])
@@ -72,20 +71,20 @@ title('Chebyshev polynomials')
 
 %%
 
-% Desativando as mensagens do 'fsolve'
+% Desativando as mensagens do 'fsolve';
 options = optimset('Display', 'off');   
                    
-% Otimização (atualizando o guess via 'for')
+% Otimização;
 tic;
 
-d = 5;      % Ordem do polinômico de Chebychev (-1)
+d = 5;      % Ordem do polinômico de Chebychev (-1);
 
 for id = 1:d 
     if id == 1
         gamma0      = ones(nz, id+1);
         fun         = @(x) build_system(x, id, parameters);
         gamma_star  = fsolve(fun, gamma0, options);
-        gamma0      = gamma_star;       % improve perfomance!!!
+        gamma0      = gamma_star;       % Improve perfomance;
     else
         new_gamma0 = gamma0;
         for iz = 1:nz
@@ -150,7 +149,7 @@ while (error > tol && iter <= max_iter)
         for ik = 1:nk
             
             %%% Pegando o capital ik;
-            k = kgrid(ik);                  % por algum motivo aumenta a performance do cógido
+            k = kgrid(ik);                  % por algum motivo aumenta a performance do cógido;
     
             %%% Computar o consumo;
             c         = zeros(nk,nz);
@@ -201,8 +200,8 @@ for iz = 1:nz
 end
 
 % Otimização;
-options = optimset('Display','off'); 
-x_star  = fsolve(fun, x0, options);
+options  = optimset('Display','off'); 
+x_star   = fsolve(fun, x0, options);
 timer(2) = toc;
 
 %%
