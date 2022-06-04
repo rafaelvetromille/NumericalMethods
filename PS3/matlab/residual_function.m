@@ -1,11 +1,11 @@
-% Resiual function 
+% Resiual function (Método de Projeção Global - Polinômios de Chebyshev)
 
-function r_calc = residual_function(gamma, k, d, j, parameters)
+function r_calc = residual_function(gamma, k, d, iz, parameters)
 
 nz           = length(parameters.zgrid);
 
-C0           = c_hat(gamma(j,:), k, d, parameters);
-K1           = parameters.zgrid(j)*(k^(parameters.alpha)) + (1-parameters.delta)*k - C0;
+C0           = c_hat(gamma(iz,:), k, d, parameters);
+K1           = parameters.zgrid(iz)*(k^(parameters.alpha)) + (1-parameters.delta)*k - C0;
 
 aux1         = zeros(nz,1);
 aux2         = zeros(nz,1);
@@ -20,6 +20,6 @@ for s = 1:nz
 end
 
 aux       = aux1 .* aux2;
-r_calc    = parameters.beta * parameters.P(j,:)*aux - 1;
+r_calc    = parameters.beta * parameters.P(iz,:)*aux - 1;
 
 end

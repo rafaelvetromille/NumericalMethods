@@ -1,4 +1,4 @@
-function EEE = euler_equation_erros_fe(c_star, g_star, x, n_elements, parameters)
+function EEE = euler_equation_erros_galerkin(c_star, g_star, x, n_elements, n_int, parameters)
 
 % Euler Equations Error (EEE)
 
@@ -52,7 +52,7 @@ set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
 set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex')
 xlabel('estoque de capital, $k$','Interpreter','latex');
 ylabel('$\log10$ $\mid$ Euler Equation Error $\mid$','Interpreter','latex');
-title(sprintf('\\textbf{Equa\\c{c}{\\~a}o dos Erros de Euler (EEE) para v{\\''a}rios $$z$$''s}\n\\textbf{(usando %4i pontos de coloca\\c{c}{\\~a}o + FE)}', n_elements), ...
+title(sprintf('\\textbf{Equa\\c{c}{\\~a}o dos Erros de Euler (EEE) para v{\\''a}rios $$z$$''s}\n\\textbf{(Galerkin + FE com %4i pontos de colo\\c{c}{\\~a}o e %4i de quadratura)}', [n_elements, n_int]), ...
     'Interpreter', 'latex', 'fontsize', 20)
 legend('show')
 axis([0.95*min(parameters.kgrid) 1.025*max(parameters.kgrid) 1.05*min(min(EEE)) 0.95*max(max(EEE))])

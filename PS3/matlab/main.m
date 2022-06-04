@@ -23,7 +23,7 @@ m        = 3;                            % Número de desvios em relação à média 
 kss  = (1/alpha*(1/beta + delta - 1))^(1/(alpha-1));        % Capital de estado estacionário;
 css  = kss^alpha + (1-delta)*kss - kss;                     % Consumo de estado estacionário;            
 
-fprintf('Com a calibração proposta, o capital e o consumo de estado estacionário são %3.2f. e %3.2f, respectivamente. \n\n', [kss, css]);
+fprintf('Com a calibração proposta, o capital e o consumo de estado estacionário são %3.2f e %3.2f, respectivamente. \n\n', [kss, css]);
 
 % Método de Tauchen (já feito em listas anteriores);
 [S,P] = mytauchen(const, m, rho, sigma, nz);
@@ -71,9 +71,6 @@ title('Chebyshev polynomials')
 
 %%
 
-% Desativando as mensagens do 'fsolve';
-options = optimset('Display', 'off');   
-                   
 % Otimização;
 tic;
 
@@ -83,7 +80,7 @@ for id = 1:d
     if id == 1
         gamma0      = ones(nz, id+1);
         fun         = @(x) build_system(x, id, parameters);
-        gamma_star  = fsolve(fun, gamma0, options);
+        gamma_star  = fsolve(fun, gamma0);
         gamma0      = gamma_star;       % Improve perfomance;
     else
         new_gamma0 = gamma0;
@@ -91,7 +88,7 @@ for id = 1:d
             new_gamma0(iz,id+1) = 0;
         end
         fun        = @(x) build_system(x, id, parameters); 
-        gamma_star = fsolve(fun, new_gamma0, options);
+        gamma_star = fsolve(fun, new_gamma0);
      end
 end
 timer(1) = toc;
@@ -136,6 +133,7 @@ for iz = 1:nz
     end
 end
 
+tic; 
 % Parâmetros numéricos;
 iter     = 0;
 error    = 1;
@@ -178,13 +176,19 @@ while (error > tol && iter <= max_iter)
     % Imprime a iteração e o erro;
     fprintf('Error %4i %6.2e \n', [iter, error]);
 end
+toc 
 
 % Plotar a função valor;
+figure(3)
 plot_value_function(v, kgrid, zgrid)
 
 %% Erros de Euler (EEE);
 EEE = euler_equation_erros(c_star, g_star, gamma_star, d, parameters);
 
+mean(mean(EEE))
+
+max(max(EEE))
+min(min(EEE))
 %% Exercício 2.1
 
 % Para este item, novamente utilize um método de projeção, mas, em vez
@@ -194,20 +198,20 @@ EEE = euler_equation_erros(c_star, g_star, gamma_star, d, parameters);
 % evidências!
 
 tic;
-nl  = 7;   % (l-1) intervalos;
-fun = @(x) build_system_fe(x, nl, parameters);
+n_elements = 11;   % (l-1) intervalos;
+fun        = @(x) build_system_fe(x, n_elements, parameters);
 
 % Guess inicial (sugerido pela monitora);
-x0 = zeros(nz,nl);
+a0 = zeros(nz,n_elements);
 for iz = 1:nz
-    for il = 1:nl
-        x0(iz,il) = il;
+    for il = 1:n_elements
+        a0(iz,il) = il;
     end
 end
 
 % Otimização;
 options  = optimset('Display','off'); 
-x_star   = fsolve(fun, x0, options);
+a_star   = fsolve(fun, a0, options);
 timer(2) = toc;
 
 %%
@@ -216,7 +220,7 @@ timer(2) = toc;
 c_new = zeros(nk,nz);
 for i = 1:nz
     for j = 1:nk
-        c_new(j,i) = c_fe(x_star(i,:), kgrid(j), nl, parameters);
+        c_new(j,i) = c_fe(a_star(i,:), kgrid(j), n_elements, parameters);
     end
 end
 
@@ -250,6 +254,7 @@ for iz = 1:nz
     end
 end
 
+tic
 % Parâmetros numéricos;
 iter     = 0;
 error    = 1;
@@ -292,12 +297,16 @@ while (error > tol && iter <= max_iter)
     % Imprime a iteração e o erro;
     fprintf('Error %4i %6.2e \n', [iter, error]);
 end
+toc 
 
 % Plotar a função valor;
+figure(3)
 plot_value_function(v, kgrid, zgrid)
 
 %% Erros de Euler (EEE);
-EEE = euler_equation_erros_fe(c_new, g_new, x_star, nl, parameters);
+EEE = euler_equation_erros_fe(c_new, g_new, a_star, n_elements, parameters);
+
+max(max(EEE))
 
 %% Exercício 2.2
 
@@ -307,3 +316,59 @@ EEE = euler_equation_erros_fe(c_new, g_new, x_star, nl, parameters);
 % tente utilizar tanto o método da colocação quanto Galerkin. De novo,
 % evidências!
 
+tic;
+n_elements  = 11;   % (l-1) intervalos;
+n_int       = 10; 
+
+fun = @(x) build_system_galerkin(x, n_elements, n_int, P, zgrid, kgrid, alpha, beta, delta, mu, nz);
+
+% Guess inicial (sugerido pela monitora);
+a0 = zeros(nz,n_elements);
+for iz = 1:nz
+    for il = 1:n_elements
+        a0(iz,il) = il;
+    end
+end
+
+% Otimização;
+options  = optimset('Display','off'); 
+a_star1   = fsolve(fun, a0, options);
+timer(2) = toc;
+
+%%
+
+% Função consumo (c = c(k,z));
+c_new1 = zeros(nk,nz);
+for i = 1:nz
+    for j = 1:nk
+        c_new1(j,i) = c_fe(a_star1(i,:), kgrid(j), n_elements, parameters);
+    end
+end
+
+% Plotar a função política do consumo;
+figure(1)
+plot_consumption_policy_function(c_new1, kgrid, zgrid)
+
+%%
+
+% Função política do capital (k' = g(k,z));
+g_new1 = zeros(nk, nz);
+for iz = 1:nz
+    for ik = 1:nk
+        g_new1(ik,iz) = zgrid(iz)*(kgrid(ik)^alpha) + (1-delta)*kgrid(ik) - c_new1(ik,iz);
+    end
+end
+
+% Plotar a função política do capital;
+figure(2)
+plot_capital_policy_function(g_new1, kgrid, zgrid)
+
+%%
+
+% Erros de Euler (Galerkin)
+figure(3)
+EEE = euler_equation_erros_galerkin(c_new1, g_new1, a_star1, n_elements, n_int, parameters);
+
+max(max(EEE))
+
+mean(mean(EEE))
