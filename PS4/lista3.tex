@@ -1,0 +1,225 @@
+\documentclass[10pt]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage[inline]{enumitem}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{pgfornament}
+\usepackage{amssymb, tabularx, xcolor, nccmath}
+\usepackage[utf8]{inputenc}
+\usepackage{cancel}
+\usepackage[portuguese]{babel}
+\usepackage{bbm}
+\usepackage{titlesec}
+\usepackage{setspace, mathtools}
+\usepackage{multirow}
+
+\titleformat*{\section}{\sffamily\large\bfseries}
+\titleformat*{\subsection}{\sffamily\normalsize\bfseries}
+\makeatletter
+\renewcommand*\env@matrix[1][\arraystretch]{%
+  \edef\arraystretch{#1}%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{*\c@MaxMatrixCols c}}
+\makeatother
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=magenta,
+    filecolor=magenta,      
+    urlcolor=magenta,
+}
+
+\usepackage[T1]{fontenc}
+\usepackage{ccfonts}
+\renewcommand{\bfseries}{\fontfamily{cmbr}\fontseries{bx}\selectfont}
+\DeclareMathAlphabet{\mathbf} {OT1}{cmbr}{bx}{n}
+\DeclareMathAlphabet{\mathbold}{OML}{cmbrm}{b}{it}
+
+\setlength{\parindent}{4em}
+\setlength{\parskip}{1em}
+\renewcommand{\baselinestretch}{1.2}
+
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
+
+
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newcommand*{\QEDA}{\hfill\ensuremath{\blacksquare}}%
+\newcommand*{\QEDB}{\hfill\ensuremath{\square}}%
+\DeclareMathOperator*{\plim}{plim}
+
+\setlength\parindent{0pt}
+
+\usepackage{dsfont}
+
+\newcommand\Z{\mathbf{Z}}
+\newcommand\E{\mathbb{E}}
+
+\newcommand\R{\mathbb{R}}
+\newcommand\D{\mathbf{D}}
+\newcommand\C{\mathbf{D}}
+\newcommand\X{\mathbf{X}}
+\newcommand\yy{\mathbf{y}}
+\newcommand\ii{{\boldsymbol{\iota}}}
+\renewcommand\O{{\boldsymbol{\Omega}}}
+\newcommand\y{\mathbf{y}}
+\newcommand\e{\mathbf{e}}
+\renewcommand\u{\mathbf{u}}
+\renewcommand\d{\mathbf{d}}
+\newcommand\resid{\mathbf{u}}
+\newcommand\0{\mathbf{0}}
+\newcommand\betabold{\pmb{\beta}}
+\newcommand\ones{\boldsymbol{\iota}}
+\newcommand\epbold{\boldsymbol{\epsilon}}
+\newcommand\varep{\boldsymbol{\varepsilon}}
+\newcommand\x{\mathbf{x}}
+\newcommand\z{\mathbf{z}}
+\newcommand\Q{\mathbf{Q}}
+\newcommand\I{\mathbf{I}}
+\newcommand\w{{\mathbf{w}}}
+\newcommand\wm{\bar{\mathbf{w}}}
+\newcommand\M{{\mathbf{M}}}
+\renewcommand\P{{\mathbf{P}}}
+\newcommand\var{\operatorname{var}}
+\newcommand\cov{\operatorname{cov}}
+\renewcommand\b{\mathbf{b}}
+\renewcommand\e{\mathbf{b}}
+
+
+\usepackage{amssymb,graphicx}
+\def\tallqed{\smash{\scalebox{.75}[1.025]{\color{blue!50!black}$\blacksquare$}}}
+
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+
+\newcommand{\prnt}[1]{\ensuremath{\left(#1\right)}} %parentheses
+\newcommand{\colch}[1]{\ensuremath{\left[#1\right]}} %square brackets
+\newcommand{\chave}[1]{\ensuremath{\left\{#1\right\}}}  %curly brackets
+
+\usepackage{stackengine}
+\renewcommand\useanchorwidth{T}
+\usepackage{graphicx}
+\stackMath
+
+\allowdisplaybreaks
+
+\usepackage{MnSymbol}
+
+\newcommand{\mytext}[1]% #1 = same as intertext
+{&\parbox{0.94\textwidth}{\rule{0pt}{.5\baselineskip}\\
+\textrm{#1}\\
+\rule{0pt}{.5\baselineskip}}&\\}
+
+\newcounter{exercise}
+\newcounter{problem}[exercise]
+\newcommand{\myitem}{\stepcounter{problem}\tag*{\alph{problem})}}
+
+\usepackage{amsmath, amsthm, amssymb, amsfonts, enumitem, fancyhdr, color, comment, graphicx, environ, csquotes}
+
+
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{sol}
+    {\\[1em] {\color{magenta}\text{Resposta.}}
+    }
+    {{\color{blue!50!black}\QEDA}}
+
+\setlength{\parskip}{\baselineskip}%
+
+\usepackage[framed,numbered,useliterate]{mcode}
+\usepackage{listings}
+\lstset{
+    inputencoding = utf8,  % Input encoding
+    extendedchars = true,  % Extended ASCII
+    texcl         = true,  % Activate LaTeX commands in comments
+    captionpos    = b,     % Caption position
+    literate      =        % Support additional characters
+      {á}{{\'a}}1  {é}{{\'e}}1  {í}{{\'i}}1 {ó}{{\'o}}1  {ú}{{\'u}}1
+      {Á}{{\'A}}1  {É}{{\'E}}1  {Í}{{\'I}}1 {Ó}{{\'O}}1  {Ú}{{\'U}}1
+      {à}{{\`a}}1  {è}{{\`e}}1  {ì}{{\`i}}1 {ò}{{\`o}}1  {ù}{{\`u}}1
+      {À}{{\`A}}1  {È}{{\'E}}1  {Ì}{{\`I}}1 {Ò}{{\`O}}1  {Ù}{{\`U}}1
+      {ä}{{\"a}}1  {ë}{{\"e}}1  {ï}{{\"i}}1 {ö}{{\"o}}1  {ü}{{\"u}}1
+      {Ä}{{\"A}}1  {Ë}{{\"E}}1  {Ï}{{\"I}}1 {Ö}{{\"O}}1  {Ü}{{\"U}}1
+      {â}{{\^a}}1  {ê}{{\^e}}1  {î}{{\^i}}1 {ô}{{\^o}}1  {û}{{\^u}}1
+      {Â}{{\^A}}1  {Ê}{{\^E}}1  {Î}{{\^I}}1 {Ô}{{\^O}}1  {Û}{{\^U}}1
+      {œ}{{\oe}}1  {Œ}{{\OE}}1  {æ}{{\ae}}1 {Æ}{{\AE}}1  {ß}{{\ss}}1
+      {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1  {å}{{\r a}}1 {Å}{{\r A}}1
+      {ñ}{{\~n}}1  {Ñ}{{\~N}}1  {¿}{{?`}}1  {¡}{{!`}}1
+      % ¿ and ¡ are not correctly displayed if inconsolata font is used
+      % together with the lstlisting environment. Consider typing code in
+      % external files and using \lstinputlisting to display them instead.      
+  }
+    
+\begin{document}
+
+\stepcounter{exercise}
+\newdimen\headerwidth
+
+
+\begin{center}
+  \framebox{
+    \vbox{
+      \headerwidth=\textwidth
+      \vspace{1mm}
+      \advance\headerwidth by -0.22in
+      \hbox to \headerwidth {\it Doutorado em Economia - EPGE/FGV \hfill MDPEMF024 - Métodos Numéricos}
+      \vspace{5mm}
+      \hbox to \headerwidth {{\Large \hfill Lista \#4 \hfill}}
+      \vspace{6mm}
+      \hbox to \headerwidth {\hfill \today \hfill}
+      \vspace{5mm}
+      \hbox to \headerwidth {{\it Aluno: Rafael Vetromille  \hfill Professor: Cézar Santos / TA: Ana Paula Ruhe}}
+      \vspace{1mm}
+      }
+    }
+\end{center}
+
+This question will ask you to solve numerically a heterogeneou-agent economy. Suppose there is a continuum of individuals that are subject to endowment shocks. A person's endowment is $e^z$, where $z$ follows the following stochastic process:
+\begin{align*}
+z' = \rho z  + \varepsilon
+\end{align*}
+where $\varepsilon \sim N(0, \sigma^2)$. The individual's instantaneous utility function is given by
+\begin{align*}
+u(c) = \frac{c^{1-\gamma}- 1}{1 - \gamma}
+\end{align*}
+and they discount the future with the factor $\beta \in (0,1)$. Each person has access to a bond that pays interest rate $r$. Their budget constraint can then be written as:
+\begin{align*}
+c + a'  = e^z + (1+r)a
+\end{align*}
+Let $\beta = 0.96$ and $\gamma = 1.0001$ for now. 
+
+The interest rate $r$ is determined to clear the bond market. The bond is
+available in zero net supply.
+
+
+\section*{Exercícios}
+
+\begin{enumerate}[wide, label = \arabic*.]
+
+\item Let $\rho = 0.9$ and $\sigma = 0.01$. Use the Tauchen method to discretize the stochastic process in a Markov chain with 9 states. (Use 3 standard deviations for each side.)
+
+
+\item Discretize the asset space using a grid and solve the individual's problem for each state variable. 
+
+
+\item Find the stationary distribution $\pi(z,a)$ and use it to compute the aggregate savings in the economy. Find the equilibrium interest rate.
+
+
+\item Suppose $\rho = .97$. Redo the analysis. How does the interest rate compare now? Explain.
+
+
+\item Suppose $\gamma = 5$. Redo the analysis. How does the interest rate compare now? Explain.
+
+\end{enumerate}
+
+
+\end{document}
