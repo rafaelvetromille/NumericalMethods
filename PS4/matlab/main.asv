@@ -1,0 +1,363 @@
+%             Hugget (1993) Incomplete Market Model - Value Function Iteration            %
+%          Program written by: João Menegotto, Marcel Prado and Rafael Vetromille         %
+%                                   Version 21/11/2021                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Section 0
+
+% Formal beggining of the document
+clearvars;
+close all;
+clc;
+
+%% Exercise 1a
+
+% Let ? = 0.9 and ? = 0.01. Use the Tauchen method to discretize the
+% stochastic process in a Markov chain with 9 states. (Use 3 standard
+% deviations for each side)
+
+% Calibração:
+const    = 0;                            % Intercept term of the AR(1) process
+mu       = 5;                            % Coeficiente de aversão ao risco;
+beta     = 0.96;                         % Fator de desconto;
+phi      = 1;                            % Limite de endividamento; 
+rho      = 0.90;                         % Parâmetro de persistência dos choques de renda;
+sigma_e  = 0.01;                         % Variância do erro do processo de renda.
+
+nz       = 9;                            % Número de estados exógenos para a versão discreta do processo de renda AR(1); 
+m        = 3;                            % Número de desvios em relação à média do processo AR para definir a amplitude do espaço de estados. 
+
+% Método de Tauchen:
+[S, P] = mytauchen(const, m, rho, sigma_e, nz)
+
+%% Exercise 1b
+
+% Discretize the asset space using a grid and solve 
+% the individual’s problem for each state variable.
+
+% Resposta:
+ymin       = -m*sqrt(sigma_e^2/(1 - rho^2));
+ymax       = +m*sqrt(sigma_e^2/(1 - rho^2));
+
+na         = 201;             % ad hoc
+amin       = -phi;            % ad hoc
+amax       = 4;               % ad hoc
+
+agrid      = nodeunif(na, amin, amax);  
+zgrid      = nodeunif(nz, ymin, ymax);
+
+%%%%% numerical parameters
+max_iter   = 1000;
+tol        = 1e-7;
+penalty    = 10^16;
+
+%%%% state grid (stacked - way faster!)
+s         = gridmake(agrid,zgrid); % ns-by-2 matrix where ns=na*ny
+ns        = size(s,1);        
+
+a         = s(:,1);
+z         = s(:,2);
+
+%%%%% parameters structure to pass to functions
+parameters.beta    = beta;
+parameters.mu      = mu;
+parameters.agrid   = agrid;
+parameters.zgrid   = zgrid;
+parameters.a       = a;
+parameters.z       = z;
+parameters.P       = P;
+
+%%%%% given r, solve the the individual's problema for each state variable
+r = 1/beta - 1;
+
+%%%%% reward function
+c  = zeros(ns,na);
+
+for ia=1:na
+    c(:,ia) = (1+r)*a + exp(z) - agrid(ia);
+end
+
+%%%%% check consumption non-negativa
+violations = (c<0);
+c = c.*(c>=0) + eps;  % sum a small value for negative values
+
+%%%%% define utility funtion
+if mu==1
+    u  = @(c)log(c);
+    u0 = log(c) - penalty*violations;
+else    
+    u  = @(c)(c.^(1-mu)-1)./(1-mu);
+    u0 = (1/(1-mu))*(c.^(1-mu) - 1) - penalty*violations;
+end
+
+%%%%% initilize value function (initial guess)
+Vguess = zeros(na,nz);
+for iy = 1:nz
+    Vguess(:,iy) = u(r.*agrid+exp(zgrid(iy)))./(1-beta);   % guess sugerido Benjamin Moll
+end
+
+%%%%% iteration of the value function
+v       = reshape(Vguess,[],1);
+
+iter    = 0;
+for iz=1:max_iter
+
+RHS      = u0+beta*kron(P,ones(na,1))*reshape(v,na,nz)';
+
+[Tv,argmax] = max(RHS,[],2);
+
+%%%%% policy that attains the maximum
+g = a(argmax);
+
+%%%%% check if converged
+error = max(abs(Tv-v));
+
+fprintf('Error %4i %6.2e \n',[iz, error]);
+
+if norm(Tv-v,inf)<tol, break, end
+
+%%%%% if not converged, update guess
+v = Tv;
+
+end
+
+%%%%% compute the consumption
+c        = (1+r)*a+exp(z)-g;
+
+%%%%% recover the value function: v(a,y)
+v        = reshape(v,na,nz);
+
+%%%%% graph (2d)
+figure(1)
+set(gcf,'DefaultLineLineWidth', 1.5);
+plot(agrid,v(:,1),agrid,v(:,2),agrid,v(:,3),...
+     agrid,v(:,4),agrid,v(:,5),agrid,v(:,6),...
+     agrid,v(:,7),agrid,v(:,8),agrid,v(:,9))
+set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
+set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex') 
+xlabel('asset level, $a$','Interpreter','latex');
+ylabel('value function, $v(a,\bar{y})$','Interpreter','latex');
+ha = legend('$y=y_1$', '$y=y_2$', '$y=y_3$',...
+            '$y=y_4$', '$y=y_5$', '$y=y_6$',...
+            '$y=y_7$', '$y=y_8$', '$y=y_9$',...
+            'Location','SouthEast');
+set(ha,'Interpreter','latex');
+axis([amin amax min(min(v)) max(max(v))]) 
+
+%%%%% comsunption policy functions: c = c(a,y)
+c        = reshape(c,na,nz);
+
+figure(2)
+set(gcf,'DefaultLineLineWidth', 1.5);
+plot(agrid,c(:,1),agrid,c(:,2),agrid,c(:,3),...
+     agrid,c(:,4),agrid,c(:,5),agrid,c(:,6),...
+     agrid,c(:,7),agrid,c(:,8),agrid,c(:,9),...
+     agrid,zeros(size(agrid)),'k--',zeros(size(agrid)),agrid,'k--')
+set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
+set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex') 
+
+xlabel('asset level, $a$','Interpreter','latex');
+ylabel('consumption policy, $c(a,y)$','Interpreter','latex');
+ha = legend('$y=y_1$', '$y=y_2$', '$y=y_3$',...
+            '$y=y_4$', '$y=y_5$', '$y=y_6$',...
+            '$y=y_7$', '$y=y_8$', '$y=y_9$',...
+            'Location','SouthEast');
+set(ha,'Interpreter','latex');
+axis([amin amax min(min(c)) max(max(c))]) 
+
+%%%%% asset policy functions: a' = g(a,y)
+g        = reshape(g,na,nz);
+
+figure(3)
+set(gcf,'DefaultLineLineWidth', 1.5);
+plot(agrid,g(:,1),agrid,g(:,2),agrid,g(:,3),...
+     agrid,g(:,4),agrid,g(:,5),agrid,g(:,6),...
+     agrid,g(:,7),agrid,g(:,8),agrid,g(:,9),...
+     agrid,zeros(size(agrid)),'k--',zeros(size(agrid)),agrid,'k--')
+set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
+set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex') 
+set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
+set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex') 
+hold off
+xlabel('asset level, $a$','Interpreter','latex');
+ylabel('asset policy, $a^{\prime}=g(a,y)$','Interpreter','latex');
+ha = legend('$y=y_1$', '$y=y_2$', '$y=y_3$',...
+            '$y=y_4$', '$y=y_5$', '$y=y_6$',...
+            '$y=y_7$', '$y=y_8$', '$y=y_9$',...
+            'Location','SouthEast');
+set(ha,'Interpreter','latex');
+axis([amin amax amin amax]) 
+
+%% Exercise 1c 
+
+% Find the stationary distribution ?(z,a) and use it to compute the agggregate 
+% savings in the economy. Find the equilibrium interest.
+
+%%%%% CONSTRUCT TRANSITION MATRIX FOR THE STATE S = (A,Y)
+A = zeros(ns,na);
+Q = zeros(ns,ns);
+
+PP = kron(P,ones(na,1));
+
+tic
+for s=1:ns
+    A(s,:) = (agrid == g(s))';  %% puts a 1 if g(s)=a 
+    Q(s,:) = kron(PP(s,:), A(s,:));
+end
+
+%%%%% COMPUTE STATIONARY DISTRIBUTION
+[eig_vectors, eig_values] = eig(Q'); 
+[~, arg]                  = min(abs(diag(eig_values)-1)); 
+unit_eig_vector           = eig_vectors(:,arg); 
+
+lambda                    = unit_eig_vector/sum(unit_eig_vector); 
+psi                       = reshape(lambda, na, nz);
+toc
+
+%%
+
+%%%%% testeeeeeeeeeeeeeeee
+
+%%%%%%%%%%%%%% CALCULAR A DISTRIBUIÃ‡ÃƒO INVARIANTE
+
+%%% CHUTE INICIAL pi_0
+
+pi_0 = ones(na, nz)/(nz*na);
+
+pi_new = pi_0;
+
+erro = 1;
+
+while(erro > tol_distrb)
+    
+    pi_old = pi_new;
+    
+    %%%%%% ITERAR
+    
+    for iz = 1:nz
+        for ia = 1:na
+            
+            select = (g == grid_a(ia));
+            
+            aux = pi_old.*select;
+            
+            pi_new(ia,iz) = sum(aux)*P(:,iz);
+            
+        end
+    end
+    
+    %%%% CALCULAR ERRO
+    
+    dif = abs(pi_new - pi_old);
+    
+    erro = max(max(dif));
+    
+    %%%%%%% ENCERRAR WHILE
+    
+    
+end
+
+
+
+
+%%%%% graph - distribuição invariante sobre os ativos apenas (distribuição de riqueza).
+figure(4)
+set(gcf,'DefaultLineLineWidth', 1.5);
+plot(agrid,psi(:,1)+psi(:,2)+psi(:,3)+...
+           psi(:,4)+psi(:,5)+psi(:,6)+...
+           psi(:,7)+psi(:,8)+psi(:,9))
+set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
+set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex')  
+xlabel('asset level, $a$','Interpreter','latex');
+ylabel('marginal asset distribution, $\sum_y \lambda(a,y)$','Interpreter','latex');
+ 
+% figure(3)
+% set(gcf,'DefaultLineLineWidth', 1.5);
+% plot(agrid,sum(psi,2))
+% set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
+% set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex')  
+% xlabel('asset level, $a$','Interpreter','latex');
+% ylabel('marginal asset distribution, $\sum_y \lambda(a,y)$','Interpreter','latex');
+
+%%%%% compute the aggregate savings 
+g = reshape(g, [], 1);
+z = sum(lambda.*g);
+disp(z)
+
+%%%%% find r that zeros out market-clearing condition
+rmin  =  0.0000;
+rmax  =  1/beta - 1;
+
+optset('bisect','tol',tol); 
+r = bisect('findr',rmin,rmax,parameters,max_iter,penalty,tol);
+
+%% Section 5 - appox. 12min
+
+% e) Comente como se altera o excesso de demanda líquida pelo
+% ativo com cada uma dessas alterações dos parâmetros.
+
+%   i. Aumento em mu, de mu = 3 para mu = 5;
+mu = 5;
+rho = 0.3; 
+sigma_e = sqrt(0.01*(1-rho^2));
+
+z1 = comparative_statistics(mu, rho, sigma_e);       % ~4min para rodar
+
+%  ii. Aumento em rho, de rho = 0.3 para rho = 0.6;
+mu = 3;
+rho = 0.6; 
+sigma_e = sqrt(0.01*(1-rho^2));
+
+z2 = comparative_statistics(mu, rho, sigma_e);       % ~4min para rodar
+
+% iii. Aumento em sigma2_e, de sigma2_e = 0.01(1 - rho^2) para sigma2_e = 0.04(1 - rho^2);
+mu = 3;
+rho = 0.3; 
+sigma_e = sqrt(0.04*(1-rho^2));
+
+z3 = comparative_statistics(mu, rho, sigma_e);      % ~4min para rodar
+
+%% Section 6
+
+% f) (Bônus - Equilíbrio): Encontre a taxa de juros que equilibra o mercado sob os parâmetros originais. 
+
+%%%%% retornar valores estipulados
+mu = 3;
+rho = 0.3; 
+sigma_e = sqrt(0.01*(1-rho^2));
+
+%%
+%%%% 
+rmin = -0.04;
+rmax = +0.10;
+
+nr    = 30;
+rgrid = linspace(rmin,rmax,nr);
+F     = zeros(nr,1);
+tic
+for iz=1:nr
+F(iz) = findr(rgrid(iz),parameters,max_iter,penalty,tol);
+end
+toc
+[~,arg] = min(abs(F));
+r = rgrid(arg);  % rate that 'zeros' market!
+
+%% 
+
+% shape of z=F(r)
+
+figure(5)
+set(gcf,'DefaultLineLineWidth', 1.5);
+plot(F,rgrid)
+xline(0, 'k--');
+yline(0, 'k--');
+set(get(gcf,'CurrentAxes'),'FontSize',14,'LineWidth', 1.5)
+set(gca,'DefaultTextInterpreter', 'latex','TickLabelInterpreter','latex') 
+xlabel('$E(a(r))$','Interpreter','latex');
+ylabel('interest rate, $r$','Interpreter','latex');
+axis([min(-2) max(4) min(rgrid) max(0.06)])
+
+%% 
+
+% Record psi, z and plot a graph evaluated at equilibrium rate
+[psi, z] = dist_wealth(r);
