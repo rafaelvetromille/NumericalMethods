@@ -12,15 +12,15 @@ clc;
 
 %% Exercise 1a
 
-% Let ? = 0.9 and ? = 0.01. Use the Tauchen method to discretize the
+% Let rho = 0.9 and sigma_e = 0.01. Use the Tauchen method to discretize the
 % stochastic process in a Markov chain with 9 states. (Use 3 standard
 % deviations for each side)
 
 % Calibração:
 const    = 0;                            % Intercept term of the AR(1) process
-mu       = 5;                            % Coeficiente de aversão ao risco;
+mu       = 1.0001;                       % Coeficiente de aversão ao risco;
 beta     = 0.96;                         % Fator de desconto;
-phi      = 1;                            % Limite de endividamento; 
+
 rho      = 0.90;                         % Parâmetro de persistência dos choques de renda;
 sigma_e  = 0.01;                         % Variância do erro do processo de renda.
 
@@ -39,12 +39,19 @@ m        = 3;                            % Número de desvios em relação à média 
 ymin       = -m*sqrt(sigma_e^2/(1 - rho^2));
 ymax       = +m*sqrt(sigma_e^2/(1 - rho^2));
 
+%%%%% given r, solve the the individual's problema for each state variable
+r = 1/beta - 1;
+
+%%%%% natural debt limit 
+phi        = exp(ymin)/r;                             
+
+%%%%% create the grid 
 na         = 500;             % ad hoc
 amin       = -phi;            % ad hoc
-amax       = 4;               % ad hoc
+amax       = +phi;            % ad hoc
 
-agrid      = nodeunif(na, amin, amax);  
-zgrid      = nodeunif(nz, ymin, ymax);
+agrid      = linspace(amin, amax, na)';  
+zgrid      = linspace(ymin, ymax, nz)';
 
 %%%%% numerical parameters
 max_iter   = 1000;
@@ -52,7 +59,7 @@ tol        = 1e-7;
 penalty    = 10^16;
 
 %%%% state grid (stacked - way faster!)
-s         = gridmake(agrid,zgrid); % ns-by-2 matrix where ns=na*ny
+s         = gridmake(agrid,zgrid);              % ns-by-2 matrix where ns=na*ny
 ns        = size(s,1);        
 
 a         = s(:,1);
@@ -67,13 +74,11 @@ parameters.a       = a;
 parameters.z       = z;
 parameters.P       = P;
 
-%%%%% given r, solve the the individual's problema for each state variable
-r = 1/beta - 1;
+%%
 
 %%%%% reward function
 c  = zeros(ns,na);
-
-for ia=1:na
+for ia = 1:na
     c(:,ia) = (1+r)*a + exp(z) - agrid(ia);
 end
 
@@ -92,8 +97,8 @@ end
 
 %%%%% initilize value function (initial guess)
 Vguess = zeros(na,nz);
-for iy = 1:nz
-    Vguess(:,iy) = u(r.*agrid+exp(zgrid(iy)))./(1-beta);   % guess sugerido Benjamin Moll
+for iz = 1:nz
+    Vguess(:,iz) = u(r.*agrid+exp(zgrid(iz)))./(1-beta);   % guess sugerido Benjamin Moll
 end
 
 %%%%% iteration of the value function
@@ -112,7 +117,7 @@ g = a(argmax);
 %%%%% check if converged
 error = max(abs(Tv-v));
 
-fprintf('Error %4i %6.2e \n',[iz, error]);
+fprintf('Error %4i %6.2e \n', [iz,error]);
 
 if norm(Tv-v,inf)<tol, break, end
 

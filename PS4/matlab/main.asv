@@ -18,9 +18,9 @@ clc;
 
 % Calibração:
 const    = 0;                            % Intercept term of the AR(1) process
-mu       = 5;                            % Coeficiente de aversão ao risco;
+mu       = 1.0001;                       % Coeficiente de aversão ao risco;
 beta     = 0.96;                         % Fator de desconto;
-phi      = 1;                            % Limite de endividamento; 
+
 rho      = 0.90;                         % Parâmetro de persistência dos choques de renda;
 sigma_e  = 0.01;                         % Variância do erro do processo de renda.
 
@@ -39,12 +39,12 @@ m        = 3;                            % Número de desvios em relação à média 
 ymin       = -m*sqrt(sigma_e^2/(1 - rho^2));
 ymax       = +m*sqrt(sigma_e^2/(1 - rho^2));
 
-na         = 201;             % ad hoc
+na         = 500;             % ad hoc
 amin       = -phi;            % ad hoc
 amax       = 4;               % ad hoc
 
-agrid      = nodeunif(na, amin, amax);  
-zgrid      = nodeunif(nz, ymin, ymax);
+agrid      = linspace(amin, amax, na);  
+zgrid      = nodeunif(ymin, ymax, nz);
 
 %%%%% numerical parameters
 max_iter   = 1000;
@@ -52,7 +52,7 @@ tol        = 1e-7;
 penalty    = 10^16;
 
 %%%% state grid (stacked - way faster!)
-s         = gridmake(agrid,zgrid); % ns-by-2 matrix where ns=na*ny
+s         = gridmake(agrid,zgrid);              % ns-by-2 matrix where ns=na*ny
 ns        = size(s,1);        
 
 a         = s(:,1);
@@ -66,6 +66,8 @@ parameters.zgrid   = zgrid;
 parameters.a       = a;
 parameters.z       = z;
 parameters.P       = P;
+
+%%
 
 %%%%% given r, solve the the individual's problema for each state variable
 r = 1/beta - 1;
@@ -221,12 +223,15 @@ toc
 %%%%%%%%%%%%%% CALCULAR A DISTRIBUIÃ‡ÃƒO INVARIANTE
 
 %%% CHUTE INICIAL pi_0
+tic 
 
-pi_0 = ones(na, nz)/(nz*na);
+pi_0 = ones(na,nz)/(nz*na);
 
 pi_new = pi_0;
 
 erro = 1;
+
+tol_distrb = 10^(-5);
 
 while(erro > tol_distrb)
     
@@ -237,7 +242,7 @@ while(erro > tol_distrb)
     for iz = 1:nz
         for ia = 1:na
             
-            select = (g == grid_a(ia));
+            select = (g == agrid(ia));
             
             aux = pi_old.*select;
             
@@ -254,10 +259,21 @@ while(erro > tol_distrb)
     
     %%%%%%% ENCERRAR WHILE
     
-    
 end
 
+%%% CALCULAR DEMANDA POR CAPITAL
 
+demanda = 0;
+
+for iz = 1:nz
+    for ia = 1:na
+        demanda = demanda + g(ia,iz)*pi_new(ia,iz);
+    end
+end
+
+toc
+
+%%
 
 
 %%%%% graph - distribuição invariante sobre os ativos apenas (distribuição de riqueza).
