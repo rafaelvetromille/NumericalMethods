@@ -16,4 +16,6 @@ Here are some of the topics we will cover in the course:
 - Calibration and estimation methods via simulation
 - Solution of models in continuous time
 
+Here you can find some solutions of the problem sets.
+
 Instructor: Cézar Santos
