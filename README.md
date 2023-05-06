@@ -1,7 +1,7 @@
 # Numerical Methods - EPGE 2022
 
 Doing economics with pencil and paper has its limits. It is often hard of
-impossible to get closed form solutions for some economic models. Therefore, numerical methods become key. With constant computational advances,
+impossible to get closed form solutions for some economic models. Therefore, numerical methods become key. With constant computational advances,
 economists can deal with ever more complex models. This is the focus of this
 course. The methods we will cover here are often used in macroeconomics,
 but also in structural econometrics, industrial organization, etc.
