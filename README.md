@@ -1,4 +1,4 @@
-# NumericalMethods
+# Numerical Methods - EPGE 2022
 
 Doing economics with pencil and paper has its limits. It is often hard of
 impossible to get closed form solutions for some economic models. Therefore, numerical methods become key. With constant computational advances,
@@ -16,4 +16,4 @@ Here are some of the topics we will cover in the course:
 - Calibration and estimation methods via simulation
 - Solution of models in continuous time
 
-Métodos Númericos EPGE 2022
+Instructor: Cézar Santos
